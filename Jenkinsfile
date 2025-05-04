@@ -1,34 +1,44 @@
 pipeline {
-    agent { 
+    agent {
         node {
             label 'docker-agent-nodejs'
-            }
-      }
-    triggers {
-        pollSCM '* * * * *'
+        }
     }
+
+    environment {
+        DOCKER_USERNAME = credentials('docker-username') // Jenkins credentials ID
+        DOCKER_PASSWORD = credentials('docker-password') // Jenkins credentials ID
+    }
+
+    triggers {
+        pollSCM('* * * * *') // Poll every minute
+    }
+
     stages {
         stage('Build') {
             steps {
-                echo "Building.."
+                echo 'Installing dependencies and running app...'
                 sh '''
-                
-                npm install
-                node index.js
+                    npm install
+                    node index.js
                 '''
             }
         }
+
         stage('Test') {
             steps {
-                echo "Testing.."
-
+                echo 'Testing...'
+                // Add test commands here if you have any
             }
         }
+
         stage('Deliver') {
             steps {
-                echo 'Deliver....'
+                echo 'Pushing Docker image to DockerHub...'
                 sh '''
-                echo "doing delivery stuff.."
+                    docker build -t jitenderrana/my-node-app:latest .
+                    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                    docker push jitenderrana/my-node-app:latest
                 '''
             }
         }
