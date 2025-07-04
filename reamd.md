@@ -1,0 +1,1 @@
+docker run --name jenkins-blueocean --restart=on-failure --detach --network jenkins1 --user root --volume jenkins-data:/var/jenkins_home --volume /var/run/docker.sock:/var/run/docker.sock --publish 8090:8080 --publish 50000:50000 jenkins

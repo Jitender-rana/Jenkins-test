@@ -42,5 +42,14 @@ pipeline {
                 '''
             }
         }
+
+        stage('Cleanup') {
+            steps {
+                echo 'Cleaning up local Docker images...'
+                sh '''
+                    docker rmi jitenderrana/my-node-app:latest || true
+                '''
+            }
+        }
     }
 }
